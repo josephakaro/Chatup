@@ -1,0 +1,34 @@
+# .github/workflows/commit-limit.yml
+name: Commit Limit
+
+on:
+  push:
+    branches:
+      - development
+      - testing
+      - production
+
+jobs:
+  limit-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+
+      - name: Install Dependencies
+        run: |
+          npm install @octokit/rest moment
+
+      - name: Check Commit Limit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: |
+          node .github/scripts/commitLimiter.js

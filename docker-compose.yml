@@ -1,0 +1,56 @@
+# docker-compose.dev.yml
+services:
+  frontend:
+    build:
+      context: ./chatup-react
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # React dev server
+    volumes:
+      - ./chatup-react:/frontend
+      - /frontend/node_modules # Prevents node_modules on host from overwriting container's node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./chatup-nodejs
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000" # Backend server
+    volumes:
+      - ./chatup-nodejs:/backend
+      - /backend/node_modules # Prevents node_modules on host from overwriting container's node_modules
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/&{MONGO_INITDB_DATABASE}
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:6.0
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge
