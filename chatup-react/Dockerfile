@@ -2,11 +2,11 @@
 FROM node:18-alpine
 
 # Set working directory
-WORKDIR /backend
+WORKDIR /frontend
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN yarn install
 
 # Install development dependencies (like react-scripts)
 # Assuming dependencies are already in package.json
@@ -15,7 +15,7 @@ RUN npm install
 COPY . .
 
 # Expose port 3000 for the React development server
-EXPOSE 3000
+EXPOSE 5173
 
 # Start the React development server
-CMD ["npm", "start"]
+CMD ["yarn", "dev"]
