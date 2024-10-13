@@ -133,17 +133,17 @@ const addMembersToGroup = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid member IDs." })
     }
 
-    // Prevent adding members who are already in the group
-    const existingMemberIds = group.members.map(
-      (membership) => membership.user.id
-    )
-    const newMemberIds = members.filter((id) => !existingMemberIds.includes(id))
+    // // Prevent adding members who are already in the group
+    // const existingMemberIds = group.members.map(
+    //   (membership) => membership.user.id
+    // )
+    // const newMemberIds = members.filter((id) => !existingMemberIds.includes(id))
 
-    if (newMemberIds.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "All members are already in the group." })
-    }
+    // if (newMemberIds.length === 0) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: "All members are already in the group." })
+    // }
 
     // Add members via GroupMembership
     const updatedGroup = await prisma.group.update({

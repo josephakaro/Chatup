@@ -1,5 +1,3 @@
-// src/server.js
-
 require("dotenv").config()
 const express = require("express")
 const http = require("http")
@@ -7,6 +5,7 @@ const cors = require("cors")
 const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
 const socketio = require("socket.io")
+const path = require("path")
 const setupSocket = require("./socket/socket")
 const errorHandler = require("./middleware/errorHandler")
 
@@ -22,7 +21,7 @@ const server = http.createServer(app)
 // Initialize Socket.io
 const io = socketio(server, {
   cors: {
-    origin: "*", // Update with your client URL in production
+    origin: "*", // Update client URL in production
     methods: ["GET", "POST"],
     credentials: true,
   },
