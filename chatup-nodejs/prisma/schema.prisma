@@ -10,45 +10,45 @@ generator client {
 }
 
 model User {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String            @unique
+  password        String?
+  avatar          String?
+  groups          GroupMembership[] @relation("UserGroups")
+  messages        Message[]         @relation("UserMessages")
+  Privetemessages Message[]         @relation("PrivateMessages")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Group {
   id        String            @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  email     String            @unique
-  password  String?
-  avatar    String?
-  groups    GroupMembership[] @relation("UserGroups")
-  messages  Message[]         @relation("UserMessages")
-  Privetemessages  Message[]         @relation("PrivateMessages")
+  members   GroupMembership[] @relation("GroupMembers")
+  messages  Message[]         @relation("GroupMessages")
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 }
 
-model Group {
-  id          String            @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  members     GroupMembership[] @relation("GroupMembers")
-  messages    Message[]         @relation("GroupMessages")
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-}
-
 model GroupMembership {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  user    User     @relation("UserGroups", fields: [userId], references: [id])
-  userId  String    @db.ObjectId
-  group   Group    @relation("GroupMembers", fields: [groupId], references: [id])
-  groupId String  @db.ObjectId
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  user    User   @relation("UserGroups", fields: [userId], references: [id])
+  userId  String @db.ObjectId
+  group   Group @relation("GroupMembers", fields: [groupId], references: [id], onDelete: Cascade)
+  groupId String @db.ObjectId
 
   @@unique([userId, groupId])
 }
 
 model Message {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  sender      User     @relation("UserMessages", fields: [senderId], references: [id])
-  senderId    String  @db.ObjectId 
-  recipientId String  @db.ObjectId
-  recipient   User?    @relation("PrivateMessages", fields: [recipientId], references: [id])
-  group       Group?   @relation("GroupMessages", fields: [groupId], references: [id])
-  groupId     String?   @db.ObjectId
+  sender      User     @relation("UserMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId    String  @db.ObjectId
+  recipient   User?    @relation("PrivateMessages", fields: [recipientId], references: [id], onDelete: SetNull)
+  recipientId String? @db.ObjectId
+  group       Group?   @relation("GroupMessages", fields: [groupId], references: [id], onDelete: Cascade)
+  groupId     String? @db.ObjectId
   content     String
   createdAt   DateTime @default(now())
 }

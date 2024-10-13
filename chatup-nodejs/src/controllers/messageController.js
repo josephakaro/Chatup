@@ -17,11 +17,11 @@ const sendPrivateMessage = async (req, res, next) => {
       return res.status(404).json({ error: "Recipient user not found." })
     }
 
-    // Create message
+    // Create message with relations
     const message = await prisma.message.create({
       data: {
-        senderId: req.user.id,
-        recipientId,
+        sender: { connect: { id: req.user.id } }, // Connect sender relation
+        recipient: { connect: { id: recipientId } }, // Connect recipient relation
         content, // Already encrypted via middleware
       },
     })
@@ -48,15 +48,17 @@ const sendGroupMessage = async (req, res, next) => {
     // Verify group exists
     const group = await prisma.group.findUnique({
       where: { id: groupId },
-      include: { members: true },
+      include: { members: { include: { user: true } } },
     })
 
     if (!group) {
       return res.status(404).json({ error: "Group not found." })
     }
 
-    // Check if user is a member
-    const isMember = group.members.some((member) => member.id === req.user.id)
+    // Check authorization: only group members can send messages
+    const isMember = group.members.some(
+      (membership) => membership.user.id === req.user.id
+    )
 
     if (!isMember) {
       return res
@@ -64,11 +66,11 @@ const sendGroupMessage = async (req, res, next) => {
         .json({ error: "You are not a member of this group." })
     }
 
-    // Create message
+    // Create message with relations
     const message = await prisma.message.create({
       data: {
-        senderId: req.user.id,
-        groupId,
+        sender: { connect: { id: req.user.id } }, // Establish relation with sender
+        group: { connect: { id: groupId } }, // Establish relation with group
         content, // Already encrypted via middleware
       },
     })
@@ -102,11 +104,7 @@ const getPrivateMessages = async (req, res, next) => {
       return res.status(404).json({ error: "Recipient user not found." })
     }
 
-    // Check authorization: only involved users can view messages
-    if (req.user.id !== recipientId) {
-      // In a real scenario, check if the requester is part of the conversation
-      // For simplicity, assume they can view
-    }
+    // Check authorization: only involved users can view message.
 
     // Retrieve messages
     const messages = await prisma.message.findMany({
@@ -126,6 +124,8 @@ const getPrivateMessages = async (req, res, next) => {
       skip: (page - 1) * limit,
       take: parseInt(limit),
     })
+
+    console.log(messages)
 
     // Decrypt messages
     const decryptedMessages = messages.map(decryptMessage)

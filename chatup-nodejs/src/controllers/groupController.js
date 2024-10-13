@@ -129,21 +129,22 @@ const addMembersToGroup = async (req, res, next) => {
       select: { id: true },
     })
 
+    console.log(typeof members, "Line: 108")
+
     if (users.length !== members.length) {
       return res.status(400).json({ error: "Invalid member IDs." })
     }
 
-    // // Prevent adding members who are already in the group
-    // const existingMemberIds = group.members.map(
-    //   (membership) => membership.user.id
-    // )
-    // const newMemberIds = members.filter((id) => !existingMemberIds.includes(id))
+    // Prevent adding members who are already in the group
+    const existingMemberIds = group.members.map((membership) => membership.id)
 
-    // if (newMemberIds.length === 0) {
-    //   return res
-    //     .status(400)
-    //     .json({ error: "All members are already in the group." })
-    // }
+    const newMemberIds = members.filter((id) => !existingMemberIds.includes(id))
+
+    if (newMemberIds.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "All members are already in the group." })
+    }
 
     // Add members via GroupMembership
     const updatedGroup = await prisma.group.update({
@@ -189,9 +190,10 @@ const removeMembersFromGroup = async (req, res, next) => {
     // Implement admin roles as needed. For simplicity, assume any member can remove others.
 
     // Verify that members to be removed are part of the group
-    const existingMemberIds = group.members.map(
-      (membership) => membership.user.id
-    )
+    const existingMemberIds = group.members.map((membership) => membership.id)
+
+    console.log(existingMemberIds, "Line: 166")
+
     const invalidMemberIds = members.filter(
       (id) => !existingMemberIds.includes(id)
     )
@@ -220,7 +222,7 @@ const removeMembersFromGroup = async (req, res, next) => {
       message: "Members removed successfully.",
       group: {
         id: updatedGroup.id,
-        members: updatedGroup.members.map((membership) => membership.user.id),
+        members: updatedGroup.members.map((membership) => membership.id),
       },
     })
   } catch (err) {
@@ -242,12 +244,14 @@ const deleteGroup = async (req, res, next) => {
       return res.status(404).json({ error: "Group not found." })
     }
 
-    // Check if the requester is authorized (e.g., admin)
-    // Implement admin roles as needed. For simplicity, assume any member can delete.
-
-    // Optionally, you might want to restrict deletion to group creators/admins
-
     // Delete the group, which should cascade delete GroupMemberships if configured
+
+    // Delete Cascade
+    await prisma.groupMembership.deleteMany({
+      where: { groupId },
+    })
+
+    // Delete Group
     await prisma.group.delete({
       where: { id: groupId },
     })
