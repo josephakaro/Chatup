@@ -11,6 +11,7 @@ services:
       - /frontend/node_modules # Prevents node_modules on host from overwriting container's node_modules
     environment:
       - REACT_APP_API_URL=http://localhost:5000/api
+      - PORT=5173
     depends_on:
       - backend
     networks:

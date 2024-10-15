@@ -73,6 +73,14 @@ const login = async (req, res, next) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     })
 
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "development",
+      sameSite: "none",
+      maxAge: 60 * 60 * 1000, // 1 hour
+    })
+
     // Respond
     res.status(200).json({
       message: "Login successful.",
@@ -121,10 +129,17 @@ const loginWithGoogle = async (req, res, next) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     })
 
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "development",
+      sameSite: "none",
+      maxAge: 60 * 60 * 1000, // 1 hour
+    })
+
     // Respond
     res.status(200).json({
       message: "Login successful.",
-      token,
       user: {
         id: user.id,
         email: user.email,

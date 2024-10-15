@@ -5,6 +5,7 @@ const cors = require("cors")
 const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
 const socketio = require("socket.io")
+const cookieParser = require("cookie-parser")
 const path = require("path")
 const setupSocket = require("./socket/socket")
 const errorHandler = require("./middleware/errorHandler")
@@ -21,7 +22,7 @@ const server = http.createServer(app)
 // Initialize Socket.io
 const io = socketio(server, {
   cors: {
-    origin: "*", // Update client URL in production
+    origin: "http://localhost:5173", // Update client URL in production
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -30,8 +31,14 @@ const io = socketio(server, {
 setupSocket(io)
 
 // Middleware
-app.use(cors())
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+)
 app.use(express.json())
+app.use(cookieParser())
 
 // Routes
 app.use("/api/auth", authRoutes)
