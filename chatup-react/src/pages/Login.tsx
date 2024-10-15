@@ -1,6 +1,6 @@
 import { Container } from "@radix-ui/themes"
 import { Link, useNavigate } from "react-router-dom"
-import { useState } from "react"
+import React, { useState } from "react"
 
 export default function Login() {
   const [user, setUser] = useState({ email: "", password: "" })
@@ -9,13 +9,13 @@ export default function Login() {
   const navigate = useNavigate()
 
   // Handle input change
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     setUser({ ...user, [e.target.name]: e.target.value })
   }
 
   // Handle login
-  const handleLogin = async (e: any) => {
+  const handleLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
 
     setLoading(true)
@@ -57,7 +57,7 @@ export default function Login() {
     <Container className="w-full h-screen bg-green-400 p-5 flex flex-col justify-center items-center">
       <form
         onSubmit={handleLogin}
-        className="bg-white sm:max-h-[700px] w-[335px] h-[500px] flex flex-col justify-start gap-5 items-center p-5 rounded-md"
+        className="m-auto bg-white sm:max-h-[700px] w-[335px] h-[500px] flex flex-col justify-start gap-5 items-center p-5 rounded-md"
       >
         <h1 className="text-2xl text-green-400 font-bold">Login</h1>
         <input

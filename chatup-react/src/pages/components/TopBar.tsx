@@ -15,7 +15,7 @@ export default function TopBar() {
           </ul>
         </div>
         <div className="flex items-center gap-4">
-          <p>Get started</p>
+          <Link to={"/auth/signup"}>Get started</Link>
           <Link
             to={"/auth/login"}
             className="px-8 py-2 bg-green-400 rounded-md text-white"
