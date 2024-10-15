@@ -6,6 +6,7 @@ import About from "./pages/About"
 import Signup from "./pages/Signup"
 import Login from "./pages/Login"
 import Chat from "./pages/Chat"
+import App from "./pages/App"
 
 export const router = createBrowserRouter([
   {
@@ -35,5 +36,9 @@ export const router = createBrowserRouter([
   {
     path: "/auth/signup",
     element: <Signup />
+  },
+  {
+    path: "/app",
+    element: <App />
   }
 ])
