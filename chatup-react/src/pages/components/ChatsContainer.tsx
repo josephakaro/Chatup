@@ -1,10 +1,16 @@
 import { useLocation } from "react-router-dom"
 import ChatBrief from "./ChatBrief"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import GroupChatBrief from "./GroupChatBrief"
 import { Avatar, Button } from "@radix-ui/themes"
 import {ChatWindowMobile} from "../ChatWindow"
+import { api } from "../../lib/requestHandler"
 
+type Profile = {
+    name: string,
+    email: string,
+    avatar: string
+}
 /**
  * Desktop version of the containing element of the chats
  * @returns DOM element
@@ -20,6 +26,39 @@ export default function ChatsContainer() {
         setIsProfilePage(location.pathname.includes('/app/profile'))
     }, [location])
     const profilePhotoInputRef = useRef<HTMLInputElement>(null)
+    const [profile, setProfile] = useState<Profile>({name: "", email: "", avatar: ""})
+    const [profileUpdate, setProfileUpdate] = useState({})
+    
+    const token = localStorage.getItem('token')
+
+    const handleProfileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setProfileUpdate({...profileUpdate, [event.target.name] : event.target.value})
+    }
+    console.log(profile)
+
+    const updateProfile = () => {
+        api.put('users/profile', profileUpdate, {
+            headers: {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        }).then((response) => {
+            setProfile(response.data.user)
+        }).catch(() => {
+            return alert("There was an error while processing your request please try again later")
+        })
+    }
+
+    useEffect(() => {
+        api.get('users/profile', {
+            headers : {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        })
+        .then((response) => {
+            setProfile(response.data.user)
+        })
+    }
+    ,[token])
     return(
         <div className="fixed top-16 left-0 h-[95%] w-[20vw] flex flex-col">
             {
@@ -47,14 +86,15 @@ export default function ChatsContainer() {
                     {/* TODO: work on profile image chooser */}
                     <p className="font-bold">Edit your profile</p>
                     <div className="cursor-pointer" onClick={() => profilePhotoInputRef.current?.click()}>
-                        <Avatar fallback="A" className="w-[100px] h-[100px] rounded-full"></Avatar>
+                        <Avatar src={profile.avatar} fallback="A" className="w-[100px] h-[100px] rounded-full"></Avatar>
                     </div>
-                    <input ref={profilePhotoInputRef} type="file" className="hidden"></input>
+                    <input ref={profilePhotoInputRef} onChange={handleProfileChange} name="avatar" type="file" className="hidden"></input>
+                    <p>{profile.email}</p>
                     <fieldset className="flex flex-col">
                         <label>Name</label>
-                        <input className="border-2 rounded-md py-1 px-2 focus:outline-green-400"></input>
+                        <input name="name" defaultValue={profile.name} onChange={handleProfileChange} className="border-2 rounded-md py-1 px-2 focus:outline-green-400"></input>
                     </fieldset>
-                    <Button className="cursor-pointer px-10 py-4">Update</Button>
+                    <Button onClick={updateProfile} className="cursor-pointer px-10 py-4">Update</Button>
                 </div>
             }
         </div>
@@ -74,6 +114,39 @@ export function ChatsContainerMobile() {
     const [isProfilePage, setIsProfilePage] = useState<boolean>(false)
     const [isChatWindow, setIsChatWindow] = useState<boolean>(false)
     const chatWindowRe = useMemo(() => /^\/app\/(chats|groups)\/[a-zA-Z0-9]+$/, [])
+
+    const [profile, setProfile] = useState<Profile>({name: "", email: "", avatar: ""})
+    const [profileUpdate, setProfileUpdate] = useState({})
+    
+    const token = localStorage.getItem('token')
+
+    const handleProfileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setProfileUpdate({...profileUpdate, [event.target.name] : event.target.value})
+    }
+
+    const updateProfile = () => {
+        api.put('users/profile', profileUpdate, {
+            headers: {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        }).then((response) => {
+            setProfile(response.data.user)
+        }).catch(() => {
+            return alert("There was an error while processing your request please try again later")
+        })
+    }
+
+    useEffect(() => {
+        api.get('users/profile', {
+            headers : {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        })
+        .then((response) => {
+            setProfile(response.data.user)
+        })
+    }
+    ,[token])
 
     useEffect(() => {
         setIsChatPage(location.pathname === '/app/chats')
@@ -115,14 +188,15 @@ export function ChatsContainerMobile() {
                     {/* TODO: work on profile image chooser */}
                     <p className="font-bold">Edit your profile</p>
                     <div className="cursor-pointer" onClick={() => profilePhotoInputRef.current?.click()}>
-                        <Avatar fallback="A" className="w-[100px] h-[100px] rounded-full"></Avatar>
+                        <Avatar src={profile.avatar} fallback="A" className="w-[100px] h-[100px] rounded-full"></Avatar>
                     </div>
-                    <input ref={profilePhotoInputRef} type="file" className="hidden"></input>
+                    <input name="avatar" onChange={handleProfileChange} ref={profilePhotoInputRef} type="file" className="hidden"></input>
+                    <p>{profile.email}</p>
                     <fieldset className="flex flex-col">
                         <label>Name</label>
-                        <input className="border-2 rounded-md py-1 px-2 focus:outline-green-400"></input>
+                        <input name="name" onChange={handleProfileChange} defaultValue={profile.name} className="border-2 rounded-md py-1 px-2 focus:outline-green-400"></input>
                     </fieldset>
-                    <Button className="cursor-pointer px-10 py-4">Update</Button>
+                    <Button onClick={updateProfile} className="cursor-pointer px-10 py-4">Update</Button>
                 </div>
             }
         </div>
