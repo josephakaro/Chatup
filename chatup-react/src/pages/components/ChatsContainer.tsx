@@ -11,6 +11,7 @@ type Profile = {
     email: string,
     avatar: string
 }
+const userId = localStorage.getItem('user_id')
 /**
  * Desktop version of the containing element of the chats
  * @returns DOM element
@@ -34,7 +35,18 @@ export default function ChatsContainer() {
     const handleProfileChange = (event: ChangeEvent<HTMLInputElement>) => {
         setProfileUpdate({...profileUpdate, [event.target.name] : event.target.value})
     }
-    console.log(profile)
+
+    useEffect(() => {
+        api.get(`messages/private/${userId ? JSON.parse(userId): null}`, {
+            headers: {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        }).then((response) => {
+            console.log(response.data)
+        }).catch(() => {
+            alert("An error occured please check back later")
+        })
+    }, [])
 
     const updateProfile = () => {
         api.put('users/profile', profileUpdate, {

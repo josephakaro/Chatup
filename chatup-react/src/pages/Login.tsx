@@ -26,6 +26,7 @@ export default function Login() {
       if (response.status === 200) {
         setLoading(false)
         localStorage.setItem('token', JSON.stringify(response.data.token))
+        localStorage.setItem('user_id', JSON.stringify(response.data.user.id))
         return navigate('/app/chats')
       }
     }).catch((error) => {
