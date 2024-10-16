@@ -1,0 +1,37 @@
+# docker-compose.dev.yml
+services:
+  frontend:
+    build:
+      context: ./chatup-react
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173" # React dev server
+    volumes:
+      - ./chatup-react:/frontend
+      - /frontend/node_modules # Prevents node_modules on host from overwriting container's node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+      - PORT=5173
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./chatup-nodejs
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000" # Backend server
+    volumes:
+      - ./chatup-nodejs:/backend
+      - /backend/node_modules # Prevents node_modules on host from overwriting container's node_modules
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
