@@ -21,36 +21,7 @@ export default function Login() {
     setLoading(true)
     setError("")
 
-    const loginData = {
-      email: user.email,
-      password: user.password,
-    }
-
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginData),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        // Store token in local storage
-        localStorage.setItem("token", data.token)
-        // Redirect to home page
-        navigate("/chat")
-      } else {
-        setError(data.error || "Something went wrong. Please try again.")
-      }
-    } catch (error) {
-      setError("Something went wrong. Please try again.")
-    } finally {
-      setLoading(false)
-    }
+    navigate('/app/chats')
   }
 
   return (

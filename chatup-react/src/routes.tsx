@@ -7,6 +7,7 @@ import Signup from "./pages/Signup"
 import Login from "./pages/Login"
 import Chat from "./pages/Chat"
 import App from "./pages/App"
+import ChatWindow from "./pages/ChatWindow"
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,28 @@ export const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: <App />
+    element: <App />,
+    children: [
+      {
+        path: 'chats',
+        element: <ChatWindow />
+      },
+      {
+        path: 'chats/:chatId',
+        element: <ChatWindow />
+      },
+      {
+        path: 'groups/:groupId',
+        element: <ChatWindow />
+      },
+      {
+        path: 'groups',
+        element: <ChatWindow />
+      },
+      {
+        path: 'profile',
+        element: <ChatWindow />
+      }
+    ]
   }
 ])

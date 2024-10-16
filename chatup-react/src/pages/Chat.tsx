@@ -90,24 +90,7 @@ export default function Chat() {
 
   return (
     <Container className="w-screen h-screen flex flex-col justify-between items-center bg-green-400 p-5">
-      <h2>Chat</h2>
-      <div className="flex flex-col h-[30dvh] items-center justify-start gap-5 w-full mt-5">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => {
-            setMessage(e.target.value)
-            handleTyping() // Emit typing event on input change
-          }}
-          placeholder="Type a message..."
-        />
-        <button onClick={handlePrivateMessage}>Send Private</button>
-        <button onClick={handleGroupMessage}>Send to Group</button>
-      </div>
-      <div className="flex bg-white h-[50dvh] overflow-y-auto p-4 rounded-md">
-        <h3>Messages Here:</h3>
-        {fatchMessage}
-      </div>
+      <p>Type your message here</p>
     </Container>
   )
 }
