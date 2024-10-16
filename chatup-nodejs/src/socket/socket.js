@@ -85,7 +85,7 @@ const setupSocket = (io) => {
         })
       } else if (type === "group") {
         socket.to(groupId).emit("typing", {
-          userId: socket.user.id,
+          userId: socket.id,
           type,
         })
       }
