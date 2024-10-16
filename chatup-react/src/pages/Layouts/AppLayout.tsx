@@ -13,14 +13,12 @@ export default function AppLayout() {
                 {/* div for chat window and or profile section */}
                 <div className="fixed right-0 h-full w-[80vw] border-2">
                     <Outlet />
-                    {/* {children} */}
                 </div>
             </div>
 
             {/* Mobile version */}
             <div className="md:hidden">
                 <ChatsContainerMobile />
-                
             </div>
         </Container>
     )
