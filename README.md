@@ -26,18 +26,6 @@
 
 <br>
 
-## Installation
-
-### Prerequisites
-Before you begin, ensure to have met the following requirements:
-1. Supabase Account
-    - Create account with [supabase](https://supabase.com)
-    - Create a supabase project
-
-2.  Google Cloud Console
-    - Create [google cloud console](https://console.cloud.google.com/welcome/new)
-    - Create a new project
-    - Create a auth consent screen and credentials
 
 ### Setup
 1. Clone the repository:
@@ -73,14 +61,24 @@ Before you begin, ensure to have met the following requirements:
     ```
 
 ## Usage
-- **Frontend:** Access the application at [http://localhost:300](http://localhost:3000).
+- **Frontend:** Access the application at [http://localhost:500](http://localhost:5000).
 - **API:** Use the following endpoints to interact with the backend:
     - **Book Report**
-    - `GET /api/book`: List All book reports
-    - `GET /api/book/[:id]`
-    - `POST /api/book/add`: Create a new Book report
-    - `DELETE /api/book/delete/[:id]`: Delete one book report by ID
-    - `UPDATE /api/book/update/[:id]`: Updates one book report by ID
+    - `POST /api/auth/register`: Registration with email
+    - `POST /api/auth/login`: Logging in with email`
+    - `POST /api/auth/google`: Logging in with google
+    - `POST /api/auth/logout`: Logging out
+    - `GET /api/users/profile`: User Profile
+    - `PUT /api/users/profile`: User Profile
+    - `POST /api/groups`: Creating group
+    - `POST /api/groups/:groupId`: Group details
+    - `POST /api/groups/:groupId/members`: Adding Members to Group
+    - `DELETE /api/groups/:groupId/members`: Removing Members from Group
+    - `DELETE /api/groups/:groupId`: Group deleting
+    - `POST /api/message/private`: Private messaging`
+    - `POST /api/message/group`: group messaging`
+    - `GET /api/message/private/:recipientId`: Private recipient
+    - `GET /api/message/group/:groupId`: Group messaging
 
 ### Testing:
 To run tests:
