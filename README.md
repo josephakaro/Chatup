@@ -1,5 +1,5 @@
 # Chatup 
-![Teafa Logo](/images/tesfa-logo.png)
+![Chatup Logo](/images/tesfa-logo.png)
 
 <br>
 
