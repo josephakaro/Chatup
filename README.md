@@ -113,9 +113,9 @@ This project is licensed under the [ONEHOPE License](/LICENSE)
 - **Node.js:** Backend Development
 - **Prisma:** Database ORM mapping
 - **Contributors:** [Joseph Akaro](https://josephakaro.tech)
--                   [Destiny Onyiyo](http://****.tech)
--                   [Abdullahi Abdulrofiu](http://arkens.tech)
--                   [Ayoola Nautin](http://****.tech)
+                    [Destiny Onyiyo](https://github.com/Destiny-Kay)
+                    [Abdullahi Abdulrofiu](https://github.com/credmighty)
+                    [Ayoola Nautin](http://****.tech)
 
 <br>
 
