@@ -3,11 +3,11 @@
 
 <br>
 
-**Chatup** is an Messaging and CRM Web Application. It is developed to easy and track Conversation between friends and family. This project is built using Next.js.
+**Chatup** is a Messaging and CRM Web Application. It is developed to easy and track Conversation between friends and family. This project is built using React.js and Node.js.
 <br>
 
-![Login screenshot](/images/login.png)
-![Dashboard screenshot](/images/dashboard.png)
+![Login screenshot](img/login.jpg)
+![Dashboard screenshot](img/landing_page.jpg)
 
 ## Table of Content
 1. [Features](#features)
@@ -43,7 +43,7 @@ Before you begin, ensure to have met the following requirements:
 1. Clone the repository:
     ```bash
     git clone https://github.com/josephakaro/Chatup.git
-    cd tesfa
+    cd Chatup
     ```
 
 2. Install dependencies:
@@ -112,7 +112,10 @@ This project is licensed under the [ONEHOPE License](/LICENSE)
 - **Next.js:** Front-end developements
 - **Node.js:** Backend Development
 - **Prisma:** Database ORM mapping
-- **Contributor:** [Joseph Akaro](https://josephakaro.tech)
+- **Contributors:** [Joseph Akaro](https://josephakaro.tech)
+-                   [Destiny Onyiyo](http://****.tech)
+-                   [Abdullahi Abdulrofiu](http://arkens.tech)
+-                   [Ayoola Nautin](http://****.tech)
 
 <br>
 
