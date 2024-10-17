@@ -21,31 +21,35 @@ export default function Login() {
 
     setLoading(true)
     setError("")
-    api.post('auth/login', user)
-    .then((response) =>{
-      if (response.status === 200) {
+    api
+      .post("/auth/login", user)
+      .then((response) => {
+        if (response.status === 200) {
+          setLoading(false)
+          sessionStorage.setItem("token", JSON.stringify(response.data.token))
+          sessionStorage.setItem(
+            "user_id",
+            JSON.stringify(response.data.user.id)
+          )
+
+          console.log(response.data)
+          return navigate("/app/chats")
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.status.response) {
+          setLoading(false)
+          return alert("An error occurred")
+        }
         setLoading(false)
-        localStorage.setItem('token', JSON.stringify(response.data.token))
-        localStorage.setItem('user_id', JSON.stringify(response.data.user.id))
-        return navigate('/app/chats')
-      }
-    }).catch((error) => {
-      if (error.response && error.status.response) {
-        setLoading(false)
-        return alert('An error occurred')
-      }
-      setLoading(false)
-      return alert('An error occurred please try again later')
-    })
+        return alert("An error occurred please try again later")
+      })
   }
 
   return (
     <Container className="w-full h-screen bg-green-400 p-5 flex flex-col justify-center items-center">
-      <div className="m-auto bg-white w-[335px] md:w-[400px] h-fit flex flex-col gap-4 items-center p-5 rounded-md">   
-        <form
-          onSubmit={handleLogin}
-          className="flex flex-col gap-2 w-full"
-        >
+      <div className="m-auto bg-white w-[335px] md:w-[400px] h-fit flex flex-col gap-4 items-center p-5 rounded-md">
+        <form onSubmit={handleLogin} className="flex flex-col gap-2 w-full">
           <h1 className="text-2xl text-green-400 font-bold">Login</h1>
           <input
             className="outline-emerald-400 w-full p-2 rounded-md border border-green-400 text-slate-500"
@@ -62,7 +66,9 @@ export default function Login() {
             placeholder="password"
             onChange={handleChange}
           />
-          {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm font-semibold">{error}</p>
+          )}
           <p className="text-sm text-green-400">
             <Link to={"/auth/signup"} className="text-green-500">
               Forgot password?
