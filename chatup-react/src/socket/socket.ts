@@ -1,10 +1,23 @@
-import { io } from "socket.io-client"
+import { io, Socket } from "socket.io-client"
 
-const token = localStorage.getItem('token')
-const socket = io(import.meta.env.VITE_WS_URL, {
-  auth: {
-    token: token ? token : null,
-  },
-})
+let socket: Socket | undefined;
 
-export default socket
+export const initSocket = (token: string | null): Socket | undefined => {
+  if (!socket && token) {
+    socket = io(import.meta.env.VITE_WS_URL, {
+      auth: {
+        token,
+      },
+    });
+  }
+  return socket;
+};
+
+export const getSocket = () => socket;
+
+export const disconnectSocket = () => {
+  if (socket) {
+    socket.disconnect();
+    socket = undefined;
+  }
+}

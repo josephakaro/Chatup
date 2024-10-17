@@ -4,6 +4,7 @@ import { CgProfile } from "react-icons/cg";
 import { NavLink, useNavigate } from "react-router-dom";
 import { TbLogout2 } from "react-icons/tb";
 import { api } from "../../lib/requestHandler";
+import { disconnectSocket } from "../../socket/socket";
 
 
 export default function ChatWindowNav() {
@@ -18,6 +19,7 @@ export default function ChatWindowNav() {
         .then((response) => {
             if (response.status === 200) {
                 localStorage.removeItem('token')
+                disconnectSocket()
                 return navigate('/')
             }
         }).catch(() => {

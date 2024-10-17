@@ -5,7 +5,7 @@ import Contact from "./pages/Contact"
 import About from "./pages/About"
 import Signup from "./pages/Signup"
 import Login from "./pages/Login"
-import Chat from "./pages/Chat"
+// import Chat from "./pages/Chat"
 import App from "./pages/App"
 import ChatWindow from "./pages/ChatWindow"
 
@@ -14,10 +14,10 @@ export const router = createBrowserRouter([
     path: "/",
     element: <Home />,
   },
-  {
-    path: "/chat",
-    element: <Chat />,
-  },
+  // {
+  //   path: "/chat",
+  //   element: <Chat />,
+  // },
   {
     path: "/contact",
     element: <Contact />,

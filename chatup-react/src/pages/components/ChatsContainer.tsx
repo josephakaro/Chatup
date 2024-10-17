@@ -46,7 +46,7 @@ export default function ChatsContainer() {
         }).catch(() => {
             alert("An error occured please check back later")
         })
-    }, [])
+    }, [token])
 
     const updateProfile = () => {
         api.put('users/profile', profileUpdate, {

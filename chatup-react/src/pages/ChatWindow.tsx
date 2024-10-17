@@ -3,8 +3,6 @@ import { IoMdSend } from "react-icons/io";
 import { Avatar } from "@radix-ui/themes";
 import ChatBubble from "./components/ChatBubble";
 import { FaArrowLeft } from "react-icons/fa6";
-import { useEffect } from "react";
-import { api } from "../lib/requestHandler";
 
 export default function ChatWindow () {
     const {chatId} = useParams< { chatId: string}>()
