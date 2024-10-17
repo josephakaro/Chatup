@@ -91,8 +91,8 @@ const sendGroupMessage = async (req, res, next) => {
 }
 
 const getPrivateMessages = async (req, res, next) => {
-  const { recipientId } = req.params
-  const { page = 1, limit = 50 } = req.query
+  const { recipientId } = req.params // The other user involved in the conversation
+  const { page = 1, limit = 50 } = req.query // Pagination query params
 
   try {
     // Verify recipient exists
@@ -104,48 +104,45 @@ const getPrivateMessages = async (req, res, next) => {
       return res.status(404).json({ error: "Recipient user not found." })
     }
 
-    // Check authorization: only involved users can view message.
+    // Check authorization: only involved users (sender or recipient) can view messages
 
-    // Retrieve messages
+    // Retrieve both sent and received messages between the current user and the recipient
     const messages = await prisma.message.findMany({
       where: {
         OR: [
+          // Messages sent by current user to the recipient
           {
             senderId: req.user.id,
             recipientId,
           },
+          // Messages sent by the recipient to the current user
           {
             senderId: recipientId,
             recipientId: req.user.id,
           },
         ],
       },
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * limit,
-      take: parseInt(limit),
+      orderBy: { createdAt: "desc" }, // Order by newest first
+      skip: (page - 1) * limit, // Pagination: Skip messages based on page
+      take: parseInt(limit), // Limit the number of messages fetched
     })
 
-    console.log(messages)
-
-    // Decrypt messages
+    // Decrypt messages (assuming a `decryptMessage` utility function is available)
     const decryptedMessages = messages.map(decryptMessage)
 
-    // Get total count
+    console.log("Decrypted Messages:", decryptedMessages)
+
+    // Get total message count for pagination
     const totalMessages = await prisma.message.count({
       where: {
         OR: [
-          {
-            senderId: req.user.id,
-            recipientId,
-          },
-          {
-            senderId: recipientId,
-            recipientId: req.user.id,
-          },
+          { senderId: req.user.id, recipientId },
+          { senderId: recipientId, recipientId: req.user.id },
         ],
       },
     })
 
+    // Respond with messages and pagination info
     res.status(200).json({
       messages: decryptedMessages,
       pagination: {
@@ -155,7 +152,7 @@ const getPrivateMessages = async (req, res, next) => {
       },
     })
   } catch (err) {
-    next(err)
+    next(err) // Handle any errors
   }
 }
 
