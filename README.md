@@ -3,7 +3,7 @@
 
 <br>
 
-**Tesfa** is an ERP and CRM Web Application. It is developed to easy and track ministry activities in and outside Organizations. This project is built using Next.js.
+**Chatup** is an Messaging and CRM Web Application. It is developed to easy and track Conversation between friends and family. This project is built using Next.js.
 <br>
 
 ![Login screenshot](/images/login.png)
