@@ -113,8 +113,9 @@ This project is licensed under the [ONEHOPE License](/LICENSE)
 - **Contributors:** [Joseph Akaro](https://josephakaro.tech)
                     [Destiny Onyiyo](https://github.com/Destiny-Kay)
                     [Abdullahi Abdulrofiu](https://github.com/credmighty)
-                    [Ayoola Nautin](http://****.tech)
+                    [Ayoola Nuatin](https://github.com/nuatin)
 
 <br>
+B
 
 [BACK TO TOP](#tesfa)
