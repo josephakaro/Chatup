@@ -15,7 +15,7 @@ export default function ChatWindow () {
                 <div className="h-full flex flex-col justify-between">
                     <div className="pl-2 bg-gray-50 border flex items-center gap-4 py-2">
                         <Avatar fallback="J" className="rounded-full"/>
-                        <p className="font-bold text-lg">Juanita</p>
+                        <p className="font-bold text-lg">{chatId}</p>
                     </div>
                     <div className="flex flex-col items-center justify-center mt-6">
                         <ChatBubble  message="Hello Juannita"/>

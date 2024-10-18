@@ -26,8 +26,8 @@ export default function Login() {
       .then((response) => {
         if (response.status === 200) {
           setLoading(false)
-          sessionStorage.setItem("token", JSON.stringify(response.data.token))
-          sessionStorage.setItem(
+          localStorage.setItem("token", JSON.stringify(response.data.token))
+          localStorage.setItem(
             "user_id",
             JSON.stringify(response.data.user.id)
           )

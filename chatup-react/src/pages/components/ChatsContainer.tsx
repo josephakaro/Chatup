@@ -5,11 +5,17 @@ import GroupChatBrief from "./GroupChatBrief"
 import { Avatar, Button } from "@radix-ui/themes"
 import {ChatWindowMobile} from "../ChatWindow"
 import { api } from "../../lib/requestHandler"
+import AddGroupPopup from "./PopupDialogs"
 
 type Profile = {
     name: string,
     email: string,
     avatar: string
+}
+type User = {
+    name: string,
+    email: string,
+    id: string
 }
 const userId = localStorage.getItem('user_id')
 /**
@@ -29,6 +35,7 @@ export default function ChatsContainer() {
     const profilePhotoInputRef = useRef<HTMLInputElement>(null)
     const [profile, setProfile] = useState<Profile>({name: "", email: "", avatar: ""})
     const [profileUpdate, setProfileUpdate] = useState({})
+    const [users, setUsers]= useState<User[]>([])
     
     const token = localStorage.getItem('token')
 
@@ -37,6 +44,8 @@ export default function ChatsContainer() {
     }
 
     useEffect(() => {
+        // TODO: Make all these api requests in one promise
+        // Get all private messages
         api.get(`messages/private/${userId ? JSON.parse(userId): null}`, {
             headers: {
                 "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
@@ -45,6 +54,29 @@ export default function ChatsContainer() {
             console.log(response.data)
         }).catch(() => {
             alert("An error occured please check back later")
+        })
+
+        // Get user profile
+        api.get('users/profile', {
+            headers : {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        })
+        .then((response) => {
+            setProfile(response.data.user)
+        })
+
+        // Get all users
+        api.get('users/all', {
+            headers: {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        }).then((response) => {
+            if (response.status === 200) {
+                setUsers(response.data.users)
+            }
+        }).catch(() => {
+            alert("An error occured while fetching users")
         })
     }, [token])
 
@@ -60,37 +92,29 @@ export default function ChatsContainer() {
         })
     }
 
-    useEffect(() => {
-        api.get('users/profile', {
-            headers : {
-                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
-            }
-        })
-        .then((response) => {
-            setProfile(response.data.user)
-        })
-    }
-    ,[token])
+
     return(
         <div className="fixed top-16 left-0 h-[95%] w-[20vw] flex flex-col">
             {
                 isChatPage &&
                 <>
-                    <ChatBrief name="Webstack group" briefMessage="Welcome to the chat brief" chatId="GHASDASD"/>
-                    <ChatBrief name="Juanita" briefMessage="Hello Martin" chatId="GHASDASD"/>
-                    <ChatBrief name="School group" briefMessage="This is a test message" chatId="GHASDASD"/>
-                    <ChatBrief name="Joseph" briefMessage="Nothing happened yesterday" chatId="GHASDASD"/>
-                    <ChatBrief name="Michael" briefMessage="Welcome to the chat brief" chatId="GHASDASD"/>
-                    <ChatBrief name="Webstack group" briefMessage="Welcome to the chat brief" chatId="GHASDASD"/>
+                {
+                    users.map(user => (
+                        <ChatBrief key={user.id} name={user.name} briefMessage="...." chatId={user.id}/>
+                    ))
+                }
                 </>
                 
             }
             {
                 isGroupPage &&
-                <div>
-                    <GroupChatBrief groupName="Webstack group" briefMessage="Wlecoasdasdasds " groupId="JJASDSAD"/>
-                    <GroupChatBrief groupName="New group" briefMessage="kasdasdasdsd" groupId="KIAJSDJASD" />
-                </div>
+                <>
+                    <AddGroupPopup />
+                    <div>
+                        <GroupChatBrief groupName="Webstack group" briefMessage="Wlecoasdasdasds " groupId="JJASDSAD"/>
+                        <GroupChatBrief groupName="New group" briefMessage="kasdasdasdsd" groupId="KIAJSDJASD" />
+                    </div>
+                </>
             }
             {
                 isProfilePage &&
@@ -185,10 +209,13 @@ export function ChatsContainerMobile() {
             }
             {
                 isGroupPage &&
-                <div>
-                    <GroupChatBrief groupName="Webstack group" briefMessage="Wlecoasdasdasds " groupId="JJASDSAD"/>
-                    <GroupChatBrief groupName="New group" briefMessage="kasdasdasdsd" groupId="KIAJSDJASD" />
-                </div>
+                <>
+                    <AddGroupPopup />
+                    <div>
+                        <GroupChatBrief groupName="Webstack group" briefMessage="Wlecoasdasdasds " groupId="JJASDSAD"/>
+                        <GroupChatBrief groupName="New group" briefMessage="kasdasdasdsd" groupId="KIAJSDJASD" />
+                    </div>
+                </>
             }
             {
                 isChatWindow &&
