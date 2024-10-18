@@ -11,4 +11,7 @@ router.get("/profile", authenticate, userController.getUserProfile)
 // Update User Profile
 router.put("/profile", authenticate, userController.updateUserProfile)
 
+// Get all users
+router.get("/all", authenticate, userController.getAllUsers)
+
 module.exports = router

@@ -48,7 +48,27 @@ const updateUserProfile = async (req, res, next) => {
   }
 }
 
+const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await prisma.user.findMany();
+
+    res.status(200).json({
+      "message": "users retrieved successfully",
+      users: users.map(user => ({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar
+      }))
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
+  getAllUsers
 }
