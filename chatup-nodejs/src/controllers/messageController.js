@@ -3,6 +3,7 @@
 const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
 const { decryptMessage } = require("../middleware/encryptionMiddleware")
+const { decrypt } = require("../utils/encryption")
 
 const sendPrivateMessage = async (req, res, next) => {
   const { recipientId, content } = req.body
@@ -130,8 +131,6 @@ const getPrivateMessages = async (req, res, next) => {
     // Decrypt messages (assuming a `decryptMessage` utility function is available)
     const decryptedMessages = messages.map(decryptMessage)
 
-    console.log("Decrypted Messages:", decryptedMessages)
-
     // Get total message count for pagination
     const totalMessages = await prisma.message.count({
       where: {
@@ -213,9 +212,93 @@ const getGroupMessages = async (req, res, next) => {
   }
 }
 
+// Start a new conversation with a user by email
+
+const startMessageWithEmail = async (req, res, next) => {
+  const { email, content } = req.body
+
+  try {
+    // Find recipient by email
+    const recipient = await prisma.user.findUnique({
+      where: { email },
+    })
+
+    if (!recipient) {
+      return res.status(404).json({ error: "Recipient not found." })
+    }
+
+    // Check if sender and recipient are the same person
+    if (recipient.id === req.user.id) {
+      return res.status(400).json({ error: "You cannot message yourself." })
+    }
+
+    // Create a message to start the conversation
+    const message = await prisma.message.create({
+      data: {
+        senderId: req.user.id,
+        recipientId: recipient.id,
+        content, // Assume content is already encrypted in middleware
+      },
+    })
+
+    res.status(201).json({
+      message: "Message sent successfully.",
+      data: {
+        id: message.id,
+        senderId: message.senderId,
+        recipientId: message.recipientId,
+        content: message.content,
+        createdAt: message.createdAt,
+      },
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+const getAllConversations = async (req, res, next) => {
+  try {
+    // Retrieve distinct conversations
+    const conversations = await prisma.message.findMany({
+      where: {
+        OR: [{ senderId: req.user.id }, { recipientId: req.user.id }],
+      },
+      distinct: ["senderId", "recipientId"],
+      orderBy: { createdAt: "desc" },
+      skip: (req.query.page - 1) * req.query.limit || 0,
+      take: parseInt(req.query.limit) || 50,
+    })
+
+    // Get total count of distinct conversations
+    const totalConversations = conversations.length
+
+    // Format response
+    res.status(200).json({
+      conversations: conversations.map((convo) => ({
+        id: convo.id,
+        lastMessage: convo.content,
+        conversationWith:
+          convo.senderId === req.user.id ? convo.recipientId : convo.senderId,
+        lastUpdated: convo.createdAt,
+      })),
+      pagination: {
+        currentPage: parseInt(req.query.page) || 1,
+        totalPages: Math.ceil(
+          totalConversations / (parseInt(req.query.limit) || 50)
+        ),
+        totalConversations,
+      },
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   sendPrivateMessage,
   sendGroupMessage,
   getPrivateMessages,
   getGroupMessages,
+  startMessageWithEmail,
+  getAllConversations,
 }
