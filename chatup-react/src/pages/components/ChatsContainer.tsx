@@ -17,6 +17,12 @@ type User = {
     email: string,
     id: string
 }
+
+type Group = {
+    name: string,
+    id: string
+}
+
 const userId = localStorage.getItem('user_id')
 /**
  * Desktop version of the containing element of the chats
@@ -36,6 +42,8 @@ export default function ChatsContainer() {
     const [profile, setProfile] = useState<Profile>({name: "", email: "", avatar: ""})
     const [profileUpdate, setProfileUpdate] = useState({})
     const [users, setUsers]= useState<User[]>([])
+    const [groups, setGroups] = useState<Group[]>([])
+    const [allGroups, setAllGroups] = useState<Group[]>([])
     
     const token = localStorage.getItem('token')
 
@@ -46,15 +54,6 @@ export default function ChatsContainer() {
     useEffect(() => {
         // TODO: Make all these api requests in one promise
         // Get all private messages
-        api.get(`messages/private/${userId ? JSON.parse(userId): null}`, {
-            headers: {
-                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
-            }
-        }).then((response) => {
-            console.log(response.data)
-        }).catch(() => {
-            alert("An error occured please check back later")
-        })
 
         // Get user profile
         api.get('users/profile', {
@@ -77,6 +76,30 @@ export default function ChatsContainer() {
             }
         }).catch(() => {
             alert("An error occured while fetching users")
+        })
+
+        //   Get all groups
+        api.get('groups/all', {
+            headers: {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        }).then((response) => {
+            setAllGroups(response.data.groups)
+        }).catch(() => {
+            alert("AN error occured while fetching groups")
+        })
+        // Get all groups a user is part of
+
+        api.get(`groups/usergroups/${userId && JSON.parse(userId)}`, {
+            headers: {
+                "Authorization": `Bearer ${token ? JSON.parse(token) : null}`
+            }
+        }).then((response) => {
+            if (response.status === 200) {
+                setGroups(response.data.groups)
+            }
+        }).catch(() => {
+            alert("An error occurred while fetching user groups")
         })
     }, [token])
 
@@ -111,8 +134,13 @@ export default function ChatsContainer() {
                 <>
                     <AddGroupPopup />
                     <div>
-                        <GroupChatBrief groupName="Webstack group" briefMessage="Wlecoasdasdasds " groupId="JJASDSAD"/>
-                        <GroupChatBrief groupName="New group" briefMessage="kasdasdasdsd" groupId="KIAJSDJASD" />
+                        <p className="font-bold text-center">Your groups</p>
+                        {
+                            groups.map(group => (
+                                <GroupChatBrief key={group.id} groupName={group.name} briefMessage="..." groupId={group.id}/>
+                            ))
+                        }
+                        <p className="font-bold text-center">Other groups you can join</p>
                     </div>
                 </>
             }

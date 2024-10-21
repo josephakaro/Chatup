@@ -6,7 +6,7 @@ export default function ChatBrief({name, briefMessage, chatId}: {name: string, b
     return(
         <div onClick={() => navigate(`/app/chats/${chatId}`)} className="cursor-pointer hover:bg-green-200 py-2 px-2">
             <div className="flex items-center gap-2">
-                <Avatar className="rounded-full" fallback="A"/>
+                <Avatar className="rounded-full" fallback={name[0]}/>
                 <div>
                     <p className="font-bold text-ellipsis">{name}</p>
                     <p>{briefMessage}</p>

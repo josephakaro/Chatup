@@ -105,6 +105,51 @@ const getGroupDetails = async (req, res, next) => {
   }
 }
 
+// Get all groups
+const getAllGroups = async (req, res, next) => {
+  try {
+    const groups = await prisma.group.findMany();
+
+    res.status(200).json({
+      "message": "groups retrieved successfully",
+      groups: groups.map(group => ({
+        id: group.id,
+        name: group.name,
+      }))
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+// Get groups a groups a member is part of
+const getGroupsForUser = async (req, res, next) => {
+  const {userId} = req.params
+
+  try {
+    const groups = await prisma.group.findMany({
+      where: {
+        members: {
+          some: {
+            userId: userId
+          }
+        }
+      }})
+
+      res.status(200).json({
+        "message": "groups retrieved successfully",
+        groups: groups.length > 0 ?
+          groups.map(group => ({
+            id: group.id,
+            name: group.name
+          }))
+          : []
+      })
+  } catch(err) {
+    next(err)
+  } 
+}
+
 // Add members to an existing group
 const addMembersToGroup = async (req, res, next) => {
   const { groupId } = req.params
@@ -265,6 +310,8 @@ const deleteGroup = async (req, res, next) => {
 module.exports = {
   createGroup,
   getGroupDetails,
+  getAllGroups,
+  getGroupsForUser,
   addMembersToGroup,
   removeMembersFromGroup,
   deleteGroup,

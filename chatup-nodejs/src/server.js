@@ -22,7 +22,7 @@ const server = http.createServer(app)
 // Initialize Socket.io
 const io = socketio(server, {
   cors: {
-    origin: "*", // Update client URL in production
+    origin: "http://localhost:5173", // Update client URL in production
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -33,7 +33,7 @@ setupSocket(io)
 // Middleware
 app.use(
   cors({
-    origin: "http://192.0.0.1:5173",
+    origin: "http://localhost:5173",
     credentials: true,
   })
 )
