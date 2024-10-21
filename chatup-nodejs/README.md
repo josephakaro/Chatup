@@ -25,6 +25,7 @@ This document outlines the RESTful APIs for the backend of a chat application si
    - [Send Group Message](#send-private-message)
    - [Get Private Message](#get-private-message)
    - [Get Group Message](#get-group-message)
+   - [Get All Conversations](#)
 5. [Socket.io Events](#socketio-events)
    - [Connection](#connection)
    - [Disconnect](#disconnect)
